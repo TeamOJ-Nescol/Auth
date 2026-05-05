@@ -13,7 +13,7 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
     JwtModule.register({
       global: true,
-      secret: process.env.JWT_SECRET || process.env.JWT_SECRET,
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '24h' },
     })
   ],
