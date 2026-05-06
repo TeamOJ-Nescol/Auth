@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
@@ -15,14 +15,14 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     const user = await this.getUser(createUserDto.email);
     if (user.userAlive) {
-      return {
-        success: false
-      };
+      throw new ConflictException('An account with that email already exists');
     }
+
+    await this.create_hash(createUserDto);
+
     return {
       success: true,
-      ...this.create_hash(createUserDto)
-    }
+    };
   }
 
   async login(loginUserDto: LoginUserDto, response: any) {
@@ -48,7 +48,6 @@ export class UsersService {
     
     const token = this.jwtService.sign(payload, {
       expiresIn: '24h',
-      secret: process.env.JWT_SECRET
     });
     
     response.cookie('jwt', token, {
