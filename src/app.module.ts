@@ -5,12 +5,14 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
+import { GamesModule } from './games/games.module';
 
 @Module({
   imports: [
-    PrismaModule, 
+    PrismaModule,
     UsersModule,
     AuthModule,
+    GamesModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET || process.env.JWT_SECRET,

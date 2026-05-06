@@ -14,4 +14,34 @@ model User {
   pfp           String  @default("")
   password_hash String
   salt          String
+  games         Game[]
+}
+
+model Game {
+  id         Int       @id @default(autoincrement())
+  ownerId    Int
+  owner      User      @relation(fields: [ownerId], references: [id])
+  mode       String
+  status     String    @default("in_progress")
+  winner     String?
+  state      String    @default("{}")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  finishedAt DateTime?
+  players    GamePlayer[]
+
+  @@index([ownerId])
+}
+
+model GamePlayer {
+  id           Int    @id @default(autoincrement())
+  gameId       Int
+  game         Game   @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  name         String
+  position     Int
+  currentScore Int?
+  finalScore   Int?
+  dartsThrown  Int    @default(0)
+
+  @@index([gameId])
 }
