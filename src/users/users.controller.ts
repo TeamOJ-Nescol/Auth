@@ -16,4 +16,10 @@ export class UsersController {
   login(@Body() loginUserDto: LoginUserDto, @Res({ passthrough: true }) response: Response) {
     return this.usersService.login(loginUserDto, response);
   }
+
+  @Post("logout")
+  logout(@Res({ passthrough: true }) response: any) {
+    response.clearCookie('jwt', { path: '/' });
+    return { success: true };
+  }
 }
