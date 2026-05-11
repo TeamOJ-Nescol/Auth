@@ -48,7 +48,6 @@ export class UsersService {
     
     const token = this.jwtService.sign(payload, {
       expiresIn: '24h',
-      secret: process.env.JWT_SECRET
     });
     
     response.cookie('jwt', token, {
