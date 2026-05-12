@@ -6,6 +6,7 @@ export class AuthController {
   @Get('check')
   @UseGuards(JwtAuthGuard)
   checkAuth(@Request() req) {
+    // This endpoint exists purely as a lightweight session probe for the UI.
     return {
       isAuthenticated: true,
       user: req.user

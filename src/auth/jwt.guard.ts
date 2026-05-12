@@ -19,6 +19,8 @@ export class JwtAuthGuard implements CanActivate {
         secret: process.env.JWT_SECRET
       });
       
+      // Attach the verified claims so downstream handlers do not need to parse
+      // the cookie a second time.
       request.user = payload;
       return true;
     } catch (error) {

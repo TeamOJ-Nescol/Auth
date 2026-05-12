@@ -14,6 +14,8 @@ export class GamesService {
         ownerId,
         mode: dto.mode,
         status: 'in_progress',
+        // Persist the live scoreboard as JSON so each game mode can evolve
+        // without forcing a schema change for every shape tweak.
         state: '{}',
         players: {
           create: dto.players.map((name, position) => ({ name, position })),
@@ -46,6 +48,8 @@ export class GamesService {
     if (dto.players?.length) {
       await Promise.all(
         dto.players.map((p) =>
+          // Position is stable within a game, so it is the safest key for
+          // partial player-state updates coming from the live UI.
           this.prisma.gamePlayer.updateMany({
             where: { gameId: id, position: p.position },
             data: {
@@ -103,6 +107,8 @@ export class GamesService {
     const wins = finished.filter((g) => !!g.winner).length;
     const byMode: Record<string, number> = {};
     for (const g of games) byMode[g.mode] = (byMode[g.mode] ?? 0) + 1;
+    // Darts thrown is aggregated per player so stats still work for
+    // multiplayer games and both scoring modes.
     const totalDarts = finished.reduce(
       (sum, g) => sum + g.players.reduce((s, p) => s + (p.dartsThrown || 0), 0),
       0,

@@ -46,10 +46,14 @@ export class UsersService {
       name: user.user.name
     };
     
+    // Keep the JWT payload minimal; route handlers can trust `req.user` after
+    // the guard verifies this signed blob.
     const token = this.jwtService.sign(payload, {
       expiresIn: '24h',
     });
     
+    // Cookie-based auth keeps the token out of client-side storage while still
+    // allowing the browser to send it automatically on API calls.
     response.cookie('jwt', token, {
       httpOnly: true, 
       secure: process.env.NODE_ENV === 'production',
@@ -68,6 +72,7 @@ export class UsersService {
   }
 
   async create_hash(createUserDto: CreateUserDto) {
+    // Store a slow password hash so the original password never reaches the DB.
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
     return this.prisma.user.create({
